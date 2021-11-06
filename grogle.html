@@ -222,6 +222,10 @@ button:hover {
                             <td class="resultat-td"><input id="resultatHT" value="0" type="number" min="0" disabled="true"></td>
                             <td class="resultat-td"><input id="resultatTTC" value="0" type="number" min="0" disabled="true"></td>
                         </tr>
+                        <tr>
+                            <td class="black table-label uppercase">Tva:</td>
+                            <td colspan="2"><input id="resultatTvaSans" value="0" type="number" min="0" disabled="true"></td>
+                        </tr>
                     </table>
                     <table class="table-fr">
                         <tr>
@@ -235,8 +239,12 @@ button:hover {
                             <td ><input id="finalHT" value="0" type="number" min="0" disabled="true"></td>
                             <td ><input id="finalTTC" value="0" type="number" min="0" disabled="true"></td>
                         </tr>
-                      
+                        <tr>
+                            <td class="red table-label uppercase">Tva:</td>
+                            <td colspan="2"><input id="resultatTva" value="0" type="number" min="0" disabled="true"></td>
+                        </tr>
                       </table>
+                   
                 </div>
      
             </div>
@@ -351,7 +359,6 @@ button:hover {
             accept=".grogle"
             id="inputfile">
             <label for="inputfile">Ouvrir un fichier grogle</label>
-            <button onclick="keySend()">test</button>
         </div>
   
     </div>
@@ -377,6 +384,7 @@ button:hover {
                         exclus1T.value = "0.00";
                         const exclus2T = document.getElementById("exclus2TTC")
                         exclus2T.value = "0.00";
+                      
                         updateResultat();
                     });
     document.getElementById('totalHT')
@@ -454,9 +462,14 @@ button:hover {
         ht = Math.round(ht * 100) / 100;
         console.log('updateResultat HT', ht);
         resultatHT.value = ht.toFixed(2);
+
         let ttc = ht * 1.2;
         ttc = Math.round(ttc * 100) / 100;
         resultatTTC.value = ttc.toFixed(2);
+
+        let tvaSans = ttc - ht;
+        tvaSans = Math.round(tvaSans * 100) / 100;
+        resultatTvaSans.value = tvaSans.toFixed(2);
 
         let frHT = (ht * 20) / 100;
         console.log('frHT', frHT);
@@ -476,18 +489,10 @@ button:hover {
         finalHT.value = ht.toFixed(2);
         finalTTC.value = ttc.toFixed(2);
 
+        let tva = ttc - ht;
+        tva = Math.round(tva * 100) / 100;
+        resultatTva.value = tva.toFixed(2);
 
-    }
-
-    // 
-    function keySend(){
-        console.log('keysend');
-        setTimeout(function(){    
-            console.log('timeout');
-            window.dispatchEvent(new KeyboardEvent('keydown', {
-  'key': 'a'
-})); }, 3000);
-     
     }
 
     document.getElementById('btonAjouter')
@@ -510,7 +515,24 @@ button:hover {
             const files = event.srcElement.files;
                        var fr = new FileReader();
                        fr.onload = function(){
-                        originalData = JSON.parse(fr.result);
+                        if (originalData.length === 0){
+                            originalData = JSON.parse(fr.result);
+                        } else {
+                            selectData = JSON.parse(fr.result);
+                            console.log('old data', originalData);
+                            console.log('file data', selectData);
+                            selectData.forEach(item => {
+                                console.log('item to compare', item);
+                                const sameTel = originalData.find(_item => _item.telephone === item.telephone);
+                                const sameName = originalData.find(_item => _item.nom === item.nom);
+                                if (!sameTel){
+                                    if (!sameName){
+                                        originalData.push(item);
+                                    }
+                                }
+                            });
+                        }
+               
                         filterData();
                        }
                        fr.readAsText(files[0]);
@@ -525,10 +547,10 @@ button:hover {
   return new Promise((resolve, reject) => {
     let fr = new FileReader();
     fr.onload = x=> resolve(fr.result);
-  reader.onload = function(e) {
+    reader.onload = function(e) {
     document.getElementById('contents').innerHTML = e.target.result;
   }
-  reader.readAsText(file)
+    reader.readAsText(file)
 })}
 
 function export2txt() {
