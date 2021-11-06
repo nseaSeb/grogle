@@ -168,7 +168,6 @@ button:hover {
 }
 </style>
 <body onload="onload()">
-    <!-- Le header et sa barre de recherche -->
     <div class="header">
         <label class="search-label" >Recherche Grogle</label>
         <div style="display: flex;width: 50%;">
@@ -176,18 +175,18 @@ button:hover {
         </div>
     
     </div>
-    <div>
-    <!-- la zone de contenu diviser en 3 colonnes -->
+    <div >
         <div class="content" >
-            <!-- La colonne de la note/brouillon libre -->
             <div class="column">
                 <div style="width: 100%;text-align: center;">
                     Note : 
                     <button id="btonEffacerNote">Effacer</button>
                 </div>
-                <textarea class="card textarea" id="note" class="brouillon"></textarea>
+                
+                <textarea class="card textarea" id="note" class="brouillon" >
+            
+                </textarea>
             </div>
-            <!-- La colonne calculette -->
             <div class="column">
                 <div style="width: 100%;text-align: center;">
                     Calcul : 
@@ -249,7 +248,6 @@ button:hover {
                 </div>
      
             </div>
-            <!-- La colonne des adresses -->
             <div class="column">
                 <div style="width: 100%;text-align: center;">
                     <button id="btonAjouter">Ajouter un nouvel élément</button>
@@ -259,96 +257,15 @@ button:hover {
                 <div id="elements" class="liste card">
                     
                 </div>
-            </div>
-
-        </div>
-        <div style="display: flex;">
-            <button onclick="export2txt()">Exporter les données dans un fichier</button>
-            <input type="file" name="inputfile"
-            class="inputfile"
-            accept=".grogle"
-            id="inputfile">
-            <label for="inputfile">Ouvrir un fichier grogle</label>
-        </div>
-  
-    </div>
-<!-- Les scripts de la page -->
-<script>
-        // Les variables
+                <script>
                     let searchText = '';
-                    let pathFolder = "%user/";
-                    let selectData = [];
-                    let originalData = [];
-
-        // Fonctions inutilisées pour le moment
-                    function onload(){
-                        console.log('onload');
-                    }
-                    function getEnv(){
-                    }
-        // Les différents listener, écoute les modifications dans les champs de saisie et boutons 
-                    document.getElementById('totalHT')
-                    .addEventListener('change', (value)=> {
-                        console.log('totalHT Value', value);
-                        const ht = value.target.value;
-                        const ttc = Math.round(ht * 1.2 * 100) / 100;
-                        const txtTTC = document.getElementById("totalTTC")
-                        txtTTC.value = ttc.toFixed(2);
-                        updateResultat();
-                    });
-                    document.getElementById('totalTTC')
-                    .addEventListener('change', (value)=> {
-                        console.log('totalHT Value', value);
-                        const ttc = value.target.value;
-                        const ht = Math.round(ttc / 1.2 * 100) / 100;
-                        const txtHT = document.getElementById("totalHT")
-                        txtHT.value = ht.toFixed(2);
-                        updateResultat();
-                    });
-                    document.getElementById('exclus1HT')
-                    .addEventListener('change', (value)=> {
-                        console.log('totalHT Value', value);
-                        const ht = value.target.value;
-                        const ttc = Math.round(ht * 1.2 * 100) / 100;
-                        const txtTTC = document.getElementById("exclus1TTC")
-                        txtTTC.value = ttc.toFixed(2);
-                        updateResultat();
-                    });
-                    document.getElementById('exclus1TTC')
-                    .addEventListener('change', (value)=> {
-                        console.log('totalHT Value', value);
-                        const ttc = value.target.value;
-                        const ht = Math.round(ttc / 1.2 * 100) / 100;
-                        const txtHT = document.getElementById("exclus1HT")
-                        txtHT.value = ht.toFixed(2);
-                        updateResultat();
-                    });
-                    document.getElementById('exclus2HT')
-                    .addEventListener('change', (value)=> {
-                        console.log('totalHT Value', value);
-                        const ht = value.target.value;
-                        const ttc = Math.round(ht * 1.2 * 100) / 100;
-                        const txtTTC = document.getElementById("exclus2TTC")
-                        txtTTC.value = ttc.toFixed(2);
-                        updateResultat();
-                    });
-                    document.getElementById('exclus2TTC')
-                    .addEventListener('change', (value)=> {
-        console.log('totalHT Value', value);
-        const ttc = value.target.value;
-        const ht = Math.round(ttc / 1.2 * 100) / 100;
-        const txtHT = document.getElementById("exclus2HT")
-        txtHT.value = ht.toFixed(2);
-        updateResultat();
-    });
-                    // Ecoute le bouton effacer la note
                     document.getElementById("btonEffacerNote")
                     .addEventListener("click", function() {
                         const note = document.getElementById("note")
                         note.value = "";
                   
                     });
-                    // Ecoute le bouton effacer le champ de recherche
+                
                     document.getElementById("btonEffacerSearch")
                     .addEventListener("click", function() {
                         const note = document.getElementById("searchtext")
@@ -356,32 +273,12 @@ button:hover {
                         searchText = "";
                         filterData();
                     });
-                    // Ecoute la saisie dans le champ de recherche
                     document.getElementById("searchtext")
                     .addEventListener('input', function(event) {
                     searchText = event.target.value;
                     filterData();
                     });
-                    document.getElementById('btonAjouter')
-                    .addEventListener('click', function(){
-                        const newData = {
-                        nom: "",
-                        adresse: "",
-                        codepostal: "",
-                        ville: "",
-                        email: "",
-                        telephone: "",
-                        note: ""
-                    }
-                    originalData.push(newData);
-                    searchText = '';
-                    filterData();
-                    });
-                    document.getElementById('inputfile')
-                    .addEventListener('change', function(event) {
-                    // Le filtrage des adresses à afficher
                     function filterData(){
-                        // On attend une saisie de plus de 3 charactères
                         if ( searchText && searchText.length > 2 ){
                             selectData = filterArrayByString(originalData, searchText);
                         } else {
@@ -392,7 +289,6 @@ button:hover {
                             } 
                   
                         }
-                        // On actualise la ligne d'info
                         const infos = document.getElementById('infoLine');
                         if (selectData.length > 0){
                             infos.innerText = 'Nombre d\'éléments affichés : ' + selectData.length;
@@ -452,7 +348,27 @@ button:hover {
                         groupe.appendChild(nom);
                         return groupe;
                     }
-                
+                </script>
+            </div>
+
+        </div>
+        <div style="display: flex;">
+            <button onclick="export2txt()">Exporter les données dans un fichier</button>
+            <input type="file" name="inputfile"
+            class="inputfile"
+            accept=".grogle"
+            id="inputfile">
+            <label for="inputfile">Ouvrir un fichier grogle</label>
+        </div>
+  
+    </div>
+
+<script>
+    function onload(){
+        console.log('onload');
+        // const input  = document.getElementById('inputfile');
+        // input.click();
+    }
     // TABLE DE CALCUL
     document.getElementById("btonEffacerCalcul")
                     .addEventListener("click", function() {
@@ -471,8 +387,60 @@ button:hover {
                       
                         updateResultat();
                     });
-
-    // La mise à jour des résultats de la calculette
+    document.getElementById('totalHT')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ht = value.target.value;
+        const ttc = Math.round(ht * 1.2 * 100) / 100;
+        const txtTTC = document.getElementById("totalTTC")
+        txtTTC.value = ttc.toFixed(2);
+        updateResultat();
+    });
+    document.getElementById('totalTTC')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ttc = value.target.value;
+        const ht = Math.round(ttc / 1.2 * 100) / 100;
+        const txtHT = document.getElementById("totalHT")
+        txtHT.value = ht.toFixed(2);
+        updateResultat();
+    });
+    document.getElementById('exclus1HT')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ht = value.target.value;
+        const ttc = Math.round(ht * 1.2 * 100) / 100;
+        const txtTTC = document.getElementById("exclus1TTC")
+        txtTTC.value = ttc.toFixed(2);
+        updateResultat();
+    });
+    document.getElementById('exclus1TTC')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ttc = value.target.value;
+        const ht = Math.round(ttc / 1.2 * 100) / 100;
+        const txtHT = document.getElementById("exclus1HT")
+        txtHT.value = ht.toFixed(2);
+        updateResultat();
+    });
+    document.getElementById('exclus2HT')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ht = value.target.value;
+        const ttc = Math.round(ht * 1.2 * 100) / 100;
+        const txtTTC = document.getElementById("exclus2TTC")
+        txtTTC.value = ttc.toFixed(2);
+        updateResultat();
+    });
+    document.getElementById('exclus2TTC')
+    .addEventListener('change', (value)=> {
+        console.log('totalHT Value', value);
+        const ttc = value.target.value;
+        const ht = Math.round(ttc / 1.2 * 100) / 100;
+        const txtHT = document.getElementById("exclus2HT")
+        txtHT.value = ht.toFixed(2);
+        updateResultat();
+    });
     function updateResultat(){
         console.log('updateResultat');
         const txtHT = document.getElementById("totalHT");
@@ -527,7 +495,23 @@ button:hover {
 
     }
 
-
+    document.getElementById('btonAjouter')
+    .addEventListener('click', function(){
+        const newData = {
+        nom: "",
+        adresse: "",
+        codepostal: "",
+        ville: "",
+        email: "",
+        telephone: "",
+        note: ""
+      }
+      originalData.push(newData);
+      searchText = '';
+      filterData();
+    });
+       document.getElementById('inputfile')
+       .addEventListener('change', function(event) {
             const files = event.srcElement.files;
                        var fr = new FileReader();
                        fr.onload = function(){
@@ -553,10 +537,13 @@ button:hover {
                        }
                        fr.readAsText(files[0]);
                    })
- 
-        // Entrée/sortie dans les fichiers de données
-        // La lecture des données
-        function readFile(file) {
+    let pathFolder = "%user/";
+    function getEnv(){
+    }
+    let selectData = [];
+    let originalData = []
+  ;
+  function readFile(file) {
   return new Promise((resolve, reject) => {
     let fr = new FileReader();
     fr.onload = x=> resolve(fr.result);
@@ -566,8 +553,7 @@ button:hover {
     reader.readAsText(file)
 })}
 
-        // La fonction d'export des données
-        function export2txt() {
+function export2txt() {
   const a = document.createElement("a");
   const fileData = JSON.stringify(originalData);
   a.href = URL.createObjectURL(new Blob([fileData], {
@@ -581,22 +567,20 @@ button:hover {
     document.body.removeChild(a);
 }
 
-    // Le filtrage des données
-    function filterArrayByString(mainArr, searchText)
+function filterArrayByString(mainArr, searchText)
+    {
+        if ( searchText === '' )
         {
-            if ( searchText === '' )
-            {
-                return mainArr;
-            }
-
-            searchText = searchText.toLowerCase();
-
-            return mainArr.filter(itemObj => {
-                return searchInObj(itemObj, searchText);
-            });
+            return mainArr;
         }
-    // la recherche dans un tableau 
-    function searchInArray(arr, searchText)
+
+        searchText = searchText.toLowerCase();
+
+        return mainArr.filter(itemObj => {
+            return searchInObj(itemObj, searchText);
+        });
+    }
+function searchInArray(arr, searchText)
     {
         for ( const value of arr )
         {
@@ -617,14 +601,10 @@ button:hover {
             }
         }
     }
-    // Fonction recherche dans les chaines de characteres
-    // appelé par searchInArray
     function searchInString(value, searchText)
     {
         return value.toLowerCase().includes(searchText);
     }
-    // Fonction de recherche dans les objets
-    // appelé par searchInArray
     function searchInObj(itemObj, searchText)
     {
         for ( const prop in itemObj )
