@@ -244,7 +244,6 @@ button:hover {
                             <td colspan="2"><input id="resultatTva" value="0" type="number" min="0" disabled="true"></td>
                         </tr>
                       </table>
-                   
                 </div>
      
             </div>
@@ -253,102 +252,8 @@ button:hover {
                     <button id="btonAjouter">Ajouter un nouvel élément</button>
                     <label id="infoLine" style="font-size: smaller;text-align: center;color: cornflowerblue;"></label>
                 </div>
-              
                 <div id="elements" class="liste card">
-                    
                 </div>
-                <script>
-                    let searchText = '';
-                    document.getElementById("btonEffacerNote")
-                    .addEventListener("click", function() {
-                        const note = document.getElementById("note")
-                        note.value = "";
-                  
-                    });
-                
-                    document.getElementById("btonEffacerSearch")
-                    .addEventListener("click", function() {
-                        const note = document.getElementById("searchtext")
-                        note.value = "";
-                        searchText = "";
-                        filterData();
-                    });
-                    document.getElementById("searchtext")
-                    .addEventListener('input', function(event) {
-                    searchText = event.target.value;
-                    filterData();
-                    });
-                    function filterData(){
-                        if ( searchText && searchText.length > 2 ){
-                            selectData = filterArrayByString(originalData, searchText);
-                        } else {
-                            const itemData = originalData.find(_item => _item.nom === '');
-                            selectData = [];
-                            if (itemData){
-                                selectData.push(itemData);
-                            } 
-                  
-                        }
-                        const infos = document.getElementById('infoLine');
-                        if (selectData.length > 0){
-                            infos.innerText = 'Nombre d\'éléments affichés : ' + selectData.length;
-                        } else {
-                            infos.innerText = "0";
-                        }
-                        infos.innerText += ' / ' + originalData.length;
-                      
-                        let elt = document.getElementById('elements');
-                            while (elt.firstChild) {
-                                 elt.removeChild(elt.firstChild);
-                            }
-                    
-                        selectData.forEach((element, index) => {
-                            const item = document.createElement("div");
-                            item.classList.add('item');
-
-                            item.appendChild(setGroup('nom','Nom : ', element.nom));
-                            item.appendChild(setGroup('adresse','Adresse : ', element.adresse));
-                            const groupe = document.createElement("div");
-                            groupe.appendChild(setGroup('codepostal','Code Postal : ', element.codepostal));
-                            groupe.appendChild(setGroup('ville','Ville : ', element.ville));
-                            groupe.classList.add("groupe-ville");
-                            item.appendChild(groupe);
-                            item.appendChild(setGroup('email','Email : ', element.email));
-                            item.appendChild(setGroup('telephone','Telephone : ', element.telephone));
-                            item.appendChild(setGroup('note','Note : ', element.note));
-                            const bton = document.createElement("button");
-                            bton.value = "Modifier"
-                            bton.innerText = "Modifier"
-                            bton.addEventListener('click', function(){
-                                element.nom = document.getElementsByClassName('nom')[index].value;
-                                element.adresse = document.getElementsByClassName('adresse')[index].value;
-                                element.ville = document.getElementsByClassName('ville')[index].value;
-                                element.codepostal = document.getElementsByClassName('codepostal')[index].value;
-                                element.email = document.getElementsByClassName('email')[index].value;
-                                element.telephone = document.getElementsByClassName('telephone')[index].value;
-                                element.note = document.getElementsByClassName('note')[index].value;
-                                filterData();
-                            });
-                            
-                            item.appendChild(bton);
-                            elt.appendChild(item);
-                        });
-                    }
-          
-                    function setGroup(classe, name, value){
-                        const groupe = document.createElement("div");
-                        groupe.classList.add("groupe-input")
-                        const label = document.createElement("label");
-                        label.innerText = name;
-                        label.classList.add('label');
-                        groupe.appendChild(label);
-                        const nom = document.createElement("input");
-                            nom.classList.add(classe);
-                            nom.value = value;
-                        groupe.appendChild(nom);
-                        return groupe;
-                    }
-                </script>
             </div>
 
         </div>
@@ -364,12 +269,44 @@ button:hover {
     </div>
 
 <script>
+    /**
+     * Variables
+    **/
+    let searchText = '';
+    let pathFolder = "%user/";
+    let selectData = [];
+    let originalData = [];
+
+    /**
+     * Constructeur/init 
+    **/
+    function getEnv(){
+    }
     function onload(){
         console.log('onload');
         // const input  = document.getElementById('inputfile');
         // input.click();
     }
-    // TABLE DE CALCUL
+ 
+    /**
+     * Les Listeners
+    **/
+
+    // L'effacement des champs
+    document.getElementById("btonEffacerNote")
+                    .addEventListener("click", function() {
+                        const note = document.getElementById("note")
+                        note.value = "";
+                  
+                    });
+                
+                    document.getElementById("btonEffacerSearch")
+                    .addEventListener("click", function() {
+                        const note = document.getElementById("searchtext")
+                        note.value = "";
+                        searchText = "";
+                        filterData();
+                    });
     document.getElementById("btonEffacerCalcul")
                     .addEventListener("click", function() {
                         const totalHT = document.getElementById("totalHT")
@@ -387,6 +324,33 @@ button:hover {
                       
                         updateResultat();
                     });
+                    
+    
+    /**
+     * L'écoute des actions
+    **/
+    document.getElementById("searchtext")
+                    .addEventListener('input', function(event) {
+                    searchText = event.target.value;
+                    filterData();
+                });
+
+    document.getElementById('btonAjouter')
+    .addEventListener('click', function(){
+        const newData = {
+        nom: "",
+        adresse: "",
+        codepostal: "",
+        ville: "",
+        email: "",
+        telephone: "",
+        note: ""
+      }
+      originalData.push(newData);
+      searchText = '';
+      filterData();
+    });
+    
     document.getElementById('totalHT')
     .addEventListener('change', (value)=> {
         console.log('totalHT Value', value);
@@ -495,22 +459,11 @@ button:hover {
 
     }
 
-    document.getElementById('btonAjouter')
-    .addEventListener('click', function(){
-        const newData = {
-        nom: "",
-        adresse: "",
-        codepostal: "",
-        ville: "",
-        email: "",
-        telephone: "",
-        note: ""
-      }
-      originalData.push(newData);
-      searchText = '';
-      filterData();
-    });
-       document.getElementById('inputfile')
+
+    /**
+     * IO fichier de données
+    **/
+    document.getElementById('inputfile')
        .addEventListener('change', function(event) {
             const files = event.srcElement.files;
                        var fr = new FileReader();
@@ -537,12 +490,7 @@ button:hover {
                        }
                        fr.readAsText(files[0]);
                    })
-    let pathFolder = "%user/";
-    function getEnv(){
-    }
-    let selectData = [];
-    let originalData = []
-  ;
+
   function readFile(file) {
   return new Promise((resolve, reject) => {
     let fr = new FileReader();
@@ -567,6 +515,89 @@ function export2txt() {
     document.body.removeChild(a);
 }
 
+    /**
+     * Les fonctions utiles
+    **/
+
+    function filterData(){
+                        if ( searchText && searchText.length > 2 ){
+                            console.log('On filter DATA', searchText);
+                            if (searchText == 'all'){
+                                console.log('On all search', originalData);
+                                selectData = [...originalData];
+                            } else {
+                                selectData = filterArrayByString(originalData, searchText);
+                                console.log('selectData', selectData);
+                            }
+                      
+                        } else {
+                            const itemData = originalData.find(_item => _item.nom === '');
+                            selectData = [];
+                            if (itemData){
+                                selectData.push(itemData);
+                            } 
+                  
+                        }
+                        const infos = document.getElementById('infoLine');
+                        if (selectData.length > 0){
+                            infos.innerText = 'Nombre d\'éléments affichés : ' + selectData.length;
+                        } else {
+                            infos.innerText = "0";
+                        }
+                        infos.innerText += ' / ' + originalData.length;
+                      
+                        let elt = document.getElementById('elements');
+                            while (elt.firstChild) {
+                                 elt.removeChild(elt.firstChild);
+                            }
+                    
+                        selectData.forEach((element, index) => {
+                            console.log('element', element);
+                            const item = document.createElement("div");
+                            item.classList.add('item');
+
+                            item.appendChild(setGroup('nom','Nom : ', element.nom));
+                            item.appendChild(setGroup('adresse','Adresse : ', element.adresse));
+                            const groupe = document.createElement("div");
+                            groupe.appendChild(setGroup('codepostal','Code Postal : ', element.codepostal));
+                            groupe.appendChild(setGroup('ville','Ville : ', element.ville));
+                            groupe.classList.add("groupe-ville");
+                            item.appendChild(groupe);
+                            item.appendChild(setGroup('email','Email : ', element.email));
+                            item.appendChild(setGroup('telephone','Telephone : ', element.telephone));
+                            item.appendChild(setGroup('note','Note : ', element.note));
+                            const bton = document.createElement("button");
+                            bton.value = "Modifier"
+                            bton.innerText = "Modifier"
+                            bton.addEventListener('click', function(){
+                                element.nom = document.getElementsByClassName('nom')[index].value;
+                                element.adresse = document.getElementsByClassName('adresse')[index].value;
+                                element.ville = document.getElementsByClassName('ville')[index].value;
+                                element.codepostal = document.getElementsByClassName('codepostal')[index].value;
+                                element.email = document.getElementsByClassName('email')[index].value;
+                                element.telephone = document.getElementsByClassName('telephone')[index].value;
+                                element.note = document.getElementsByClassName('note')[index].value;
+                                filterData();
+                            });
+                            
+                            item.appendChild(bton);
+                            elt.appendChild(item);
+                        });
+                    }
+          
+                    function setGroup(classe, name, value){
+                        const groupe = document.createElement("div");
+                        groupe.classList.add("groupe-input")
+                        const label = document.createElement("label");
+                        label.innerText = name;
+                        label.classList.add('label');
+                        groupe.appendChild(label);
+                        const nom = document.createElement("input");
+                            nom.classList.add(classe);
+                            nom.value = value;
+                        groupe.appendChild(nom);
+                        return groupe;
+                    }
 function filterArrayByString(mainArr, searchText)
     {
         if ( searchText === '' )
