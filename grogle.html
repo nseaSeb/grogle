@@ -476,12 +476,13 @@ button:hover {
                             console.log('file data', selectData);
                             selectData.forEach(item => {
                                 console.log('item to compare', item);
-                                const sameTel = originalData.find(_item => _item.telephone === item.telephone);
+                                const sameCodePostal = originalData.find(_item => _item.codepostal === item.codepostal);
                                 const sameName = originalData.find(_item => _item.nom === item.nom);
-                                if (!sameTel){
-                                    if (!sameName){
+                                if (!sameCodePostal){
                                         originalData.push(item);
-                                    }
+                                }
+                                if (!sameName){
+                                    originalData.push(item);
                                 }
                             });
                         }
